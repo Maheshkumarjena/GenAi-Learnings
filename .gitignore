@@ -1,0 +1,21 @@
+.env
+# Python virtual environment
+env/
+venv/
+
+# Environment variables
+.env
+
+# Chroma DB
+chroma/
+chroma_db/
+
+# FAISS index
+faiss_index/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
