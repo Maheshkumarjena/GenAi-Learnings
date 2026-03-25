@@ -11,3 +11,5 @@ beautifulsoup4
 streamlit
 langchain_ollama
 langchain_groq
+langchain_community
+transformers
