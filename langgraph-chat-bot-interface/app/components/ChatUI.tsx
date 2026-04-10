@@ -1,5 +1,7 @@
 "use client";
-
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import { useEffect, useRef, useState } from "react";
 
 interface Message {
@@ -24,9 +26,7 @@ export default function ChatUI({ sessionId }: { sessionId: string }) {
     async function loadMessages() {
       setLoadingChat(true);
       try {
-        const res = await fetch(
-          `/api/chat/history?sessionId=${sessionId}`
-        );
+        const res = await fetch(`/api/chat/history?sessionId=${sessionId}`);
         const data = await res.json();
         setMessages(data.messages || []);
       } catch (error) {
@@ -140,42 +140,47 @@ export default function ChatUI({ sessionId }: { sessionId: string }) {
           >
             <div
               className={`px-4 py-3 rounded-xl max-w-[70%] whitespace-pre-wrap ${
-                msg.role === "user"
-                  ? "bg-[#19c37d] text-black"
-                  : "bg-[#444654]"
+                msg.role === "user" ? "bg-[#19c37d] text-black" : "bg-[#444654]"
               }`}
             >
-              {msg.content}
+              {msg.role === "assistant" ? (
+                <div className="prose prose-invert max-w-none">
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                msg.content
+              )}
             </div>
           </div>
         ))}
 
-        {loading && (
-          <div className="text-gray-400 italic">
-            Thinking...
-          </div>
-        )}
+        {loading && <div className="text-gray-400 italic">Thinking...</div>}
 
         <div ref={bottomRef} />
       </div>
 
       {/* Input Section */}
-      <div className="p-4 border-t border-gray-700">
-        <div className="flex gap-2 max-w-3xl mx-auto">
+      {/* Input Section */}
+      <div className="w-full p-4 border-t border-gray-700 bg-[#343541] overflow-hidden">
+        <div className="flex items-center gap-2 w-full max-w-3xl mx-auto">
           <input
-            className="flex-1 p-3 bg-[#40414f] rounded outline-none"
+            className="flex-1 min-w-0 w-full p-3 bg-[#40414f] rounded-lg outline-none
+                 focus:ring-2 focus:ring-[#19c37d] transition box-border"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) =>
-              e.key === "Enter" && !loading && sendMessage()
+              e.key === "Enter" && !e.shiftKey && !loading && sendMessage()
             }
             disabled={loading}
           />
           <button
             onClick={sendMessage}
             disabled={loading}
-            className="bg-[#19c37d] px-4 rounded text-black font-medium disabled:opacity-50"
+            className="shrink-0 bg-[#19c37d] px-5 py-2 rounded-lg text-black font-semibold
+                 hover:bg-[#16a669] transition disabled:opacity-50"
           >
             Send
           </button>

@@ -7,7 +7,7 @@ export default function Sidebar({
   createNewChat,
 }: any) {
   return (
-    <div className="w-64 bg-[#202123] text-white h-screen p-3">
+    <div className="w-64 sticky top-0 bg-[#202123] text-white h-screen p-3">
       <button
         onClick={createNewChat}
         className="w-full mb-4 bg-[#343541] p-2 rounded"
