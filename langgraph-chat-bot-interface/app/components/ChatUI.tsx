@@ -95,16 +95,17 @@ export default function ChatUI({ sessionId }: { sessionId: string }) {
         buffer = lines.pop() || "";
 
         for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            const data = line.replace("data: ", "").trim();
+          if (line.startsWith("data:")) {
+            // Remove only the SSE prefix without trimming spaces
+            const data = line.replace(/^data:\s?/, "");
 
-            // Skip termination signals
+            // Skip termination signal
             if (data === "[DONE]") {
               setLoading(false);
               return;
             }
 
-            // Append streamed text
+            // Append streamed text while preserving spaces
             aiMessage.content += data;
 
             // Update the last message in state
